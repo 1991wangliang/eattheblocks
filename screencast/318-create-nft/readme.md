@@ -11,7 +11,36 @@
 * truffle/hdwallet-provider 
 > execue command: `sudo npm install @truffle/hdwallet-provider@1.7.0`
 
-## Execute Setps
+## Frontend Part
+### Execute Setps
+
+* modify token.json
+```
+{
+  "0": {
+    "name": "ETB NFT",
+    "description": "With this NFT you boost your Blockchain programming skills by 10000!",
+    "image": "http://localhost:8000/token-0.jpeg"
+  }
+}
+```
+> image url setting local url .
+> setting server port 8000 on server.js `app.listen(process.env.PORT || 8000);`
+* build project 
+```
+npm install
+```
+* Run Project
+```
+npm start
+```
+* Test 
+browser http://localhost:8000 url on explorer
+
+![](server.png)
+
+## SmartContract Part 
+### Execute Setps
 
 * Register infura account 
 
@@ -30,6 +59,16 @@ https://faucets.chain.link/rinkeby
 * setting truffle-config.js 
 > setting mnemonic(test private key) and rinkeby mnemonic (infura project enpoints https url)
 
+* modify NFT smart contract 
+
+```
+  function _baseURI() internal view override returns (string memory) {
+    return 'http://localhost:8000/';
+  }
+
+```
+_baseURI() to return local server url.
+
 * Build Project
 
 > npm install
@@ -38,7 +77,7 @@ https://faucets.chain.link/rinkeby
 * Deploy SmartContract 
 > truffle migrate --reset --network rinkeby
 
-## Output logs 
+### Output logs 
 
 ```
 
@@ -51,7 +90,7 @@ Starting migrations...
 ======================
 > Network name:    'rinkeby'
 > Network id:      4
-> Block gas limit: 29999943 (0x1c9c347)
+> Block gas limit: 29999972 (0x1c9c364)
 
 
 1_initial_migration.js
@@ -59,22 +98,22 @@ Starting migrations...
 
    Replacing 'Migrations'
    ----------------------
-   > transaction hash:    0x7c5c695373e71f88befb507b1e5c4746bc8c0e1fb63dae64856f162089701179
-   > Blocks: 1            Seconds: 19
-   > contract address:    0xe72eC364714A9acF745C3c1ED9774e336d13110c
-   > block number:        10295981
-   > block timestamp:     1646788768
+   > transaction hash:    0x46cf11e40f82c93534ce8bca142eb04af248060ff8dcb4ca81039104e8958687
+   > Blocks: 2            Seconds: 22
+   > contract address:    0xC716bbb861E7D40EDf6f7D276f24742Bcd17eFb7
+   > block number:        10297289
+   > block timestamp:     1646808573
    > account:             0xe4b2c5217EE1F4e6f5FF51F11396318530FE5F77
-   > balance:             0.290613672376696938
+   > balance:             1.574698174800225781
    > gas used:            245600 (0x3bf60)
-   > gas price:           2.500000012 gwei
+   > gas price:           2.500000014 gwei
    > value sent:          0 ETH
-   > total cost:          0.0006140000029472 ETH
+   > total cost:          0.0006140000034384 ETH
 
    > Saving migration to chain.
    > Saving artifacts
    -------------------------------------
-   > Total cost:     0.0006140000029472 ETH
+   > Total cost:     0.0006140000034384 ETH
 
 
 2_deploy_contracts.js
@@ -82,28 +121,61 @@ Starting migrations...
 
    Replacing 'NFT'
    ---------------
-   > transaction hash:    0x708b22fbd75545ef5310ab55ed542d50a6a852b5798bad912a2b8eb8e12bf9fb
+   > transaction hash:    0xa2dd1f54534c8f27a12ad39f2a97ee0cc7d7b2976d44913821f9a0c35e3de6fc
    > Blocks: 2            Seconds: 22
-   > contract address:    0x5Af8a188231a4363e53de2f9ecCF20037BB3A8fE
-   > block number:        10295985
-   > block timestamp:     1646788828
+   > contract address:    0x85bBb7040AA64B30F856b981068c12Afc632d128
+   > block number:        10297293
+   > block timestamp:     1646808633
    > account:             0xe4b2c5217EE1F4e6f5FF51F11396318530FE5F77
-   > balance:             0.284718832348401706
-   > gas used:            2312023 (0x234757)
-   > gas price:           2.500000012 gwei
+   > balance:             1.568783004767100829
+   > gas used:            2320155 (0x23671b)
+   > gas price:           2.500000014 gwei
    > value sent:          0 ETH
-   > total cost:          0.005780057527744276 ETH
+   > total cost:          0.00580038753248217 ETH
 
    > Saving migration to chain.
    > Saving artifacts
    -------------------------------------
-   > Total cost:     0.005780057527744276 ETH
+   > Total cost:     0.00580038753248217 ETH
 
 Summary
 =======
 > Total deployments:   2
-> Final cost:          0.006394057530691476 ETH
+> Final cost:          0.00641438753592057 ETH
+
 ```
+
+## Backend Part
+
+### Execute Setps
+
+* modify App.js
+```
+  useEffect(() => {
+    const init = async () => {
+      const { nft } = await getBlockchain();
+      const tokenId = await nft.nextTokenId();
+      const tokenURI = await nft.tokenURI(tokenId-1);
+      const { data } = await axios.get(tokenURI);
+      console.log(`data:${data}`);
+      setTokenInfo(data.result);
+    };
+    init();
+  }, []);
+```  
+Need get `nft.nextTokenId()` then create tokenUrl,tokenId need `tokenId-1` that on NFT smart contract create token will be add 1.
+
+* Build Project
+> npm install
+
+* Run Project
+> npm start 
+
+* Page Test
+> 1. need to connect matemask 
+> 2. get token image
+
+![](nft.png)
 
 ## Link
 
