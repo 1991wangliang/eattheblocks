@@ -35,6 +35,13 @@ https://testnet.binance.org/faucet-smart
 
 > truffle exec ./scripts/deploy-pool.js --network=bscTestnet
 
+## Output logs
+```
+Using network 'bscTestnet'.
 
+balance LP: 9000
+```
+## Link
 
+https://www.youtube.com/watch?v=g7TuczcklrY&t=163s
 
